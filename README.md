@@ -2,6 +2,8 @@
 
 A Facebook web application to build stronger connections by knowing your family better. In this digital age, social media plays a key role to bridge distances so that family members can not just know each others names, but know more about them. What was it like when they were growing up? What are their hobbies? May be the grandson and grandparent are both die-hard movie lovers. Discover interesting facts about your family and build stronger connections.
 
+**Note: The app is currently in Development Mode.**
+
 # Features
 
 - **Edit basic information** about the user, such as, date of birth, location, etc.
