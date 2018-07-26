@@ -67,7 +67,7 @@ https://youtu.be/Go4RbO5r5b8
 
 ### View Family Tree
 
-![Family Tree](/images/screenshots/Family_Tree.png?raw=true "Family Tree")
+![Family Tree](/images/screenshots/User_Family_Tree.png?raw=true "Family Tree")
 
 ### View Member Information
 
