@@ -1,0 +1,7 @@
+{
+  "logLevel": "debug",
+  "dbHost": "localhost",
+  "dbName": "myfamily",
+  "dbUser": "myfamily",
+  "dbPassword": "password"
+}

@@ -1,0 +1,168 @@
+body {
+  font-size: 10pt;
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+form > table {
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  background: #f0f0f0;
+  padding: 10px;
+  margin-left: 20px;
+  margin-right: auto;
+}
+
+td {
+  padding: 5px;
+}
+
+input[type=text], input[type=password] {
+  font-size: 10pt;
+  width: 90%;
+  padding: 5px;
+  margin: 5px;
+  border: 2px solid lightgray;
+  border-radius: 5px;
+}
+
+input[type=submit], input[type=button] {
+  font-size: 10pt;
+  font-weight: bold;
+  color: white;
+  padding: 10px;
+  margin: 5px;
+  background: #3366cc;
+  border-radius: 5px;
+}
+
+.menu {
+  width: 200px;
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #f0f0f0;
+  overflow-x: hidden;
+  padding-top: 50px;
+  transition: 0.5s;
+}
+
+.menu a, .menuItem {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+  display: block;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+.menu a:visited, .menuItem a:visited {
+  color: black;
+}
+
+.menu a:hover, .menuItem:hover {
+  background: white;
+}
+
+.activeMenuAction {
+  background-color: white;
+  font-weight: bold;
+}
+
+.subMenu {
+  display: none;
+  margin-left: 8px;
+  margin-right: auto;
+}
+
+.subMenu a {
+  font-weight: normal;
+}
+
+.subMenu a:active {
+  background-color: white;
+}
+
+.actionBar {
+  background: transparent;
+}
+
+.dataTable {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  margin-left: 20px;
+  margin-right: auto;
+}
+
+.dataTable th, .dataTable td {
+  border: 1px solid #ddd;
+  padding: 5px;
+}
+
+.dataTable th {
+  background-color: #ddd;
+}
+
+/* jQuery related CSS classes */
+.menuAction {}
+.crudForm {}
+.editFamilyMember{}
+.deleteFamilyMember{}
+.editMemberResposnes{}
+
+.messageArea {
+  width: 100%;
+  height: 50px;
+  padding-left: 200px;
+  padding-right: 10px;
+}
+
+.message, .error {
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-color: #cccccc;
+  background:  #fcf3cf;
+  text-align: center;
+  padding: 5px;
+}
+
+.error {
+  color: red;
+}
+  
+.content {
+  width: 100%;
+  height: 100%;
+  padding-left: 200px;
+}
+
+@media screen and (max-height: 450px) {
+    .menu {padding-top: 15px;}
+    .menu a {font-size: 18px;}
+}
+
+/* Family Tree related styles. */
+.chart { height: 600px; margin-left: 20px; margin-right: auto; width: 900px; }
+.Treant > .node {  }
+.Treant > p { font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; font-weight: bold; font-size: 12px; }
+.node-name { font-weight: bold;}
+.chartNode {
+  padding: 2px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: lemonchiffon;
+  border: 1px solid #000;
+  width: 200px;
+  font-family: Tahoma;
+  font-size: 12px;
+}
+.chartNode img {
+  margin-right: 10px;
+}
