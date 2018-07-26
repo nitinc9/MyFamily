@@ -34,7 +34,7 @@ https://apps.facebook.com/233351993945655
 
 ## How to use the App?
 Use the **My Family** app to know your family better and build stronger connections by following these simple steps.
-- **Invite</strong> family members to use the **My Family** app.
+- **Invite** family members to use the **My Family** app.
 - **Create a family**. Don't forget to give it a cool name! For example, *The Legendary Patils*.
   - __Tip__: You can create multiple families to organize better and sshhhh... keep family secrets.
 - **Add members** to your family. You can also enable few members to manage the family.
