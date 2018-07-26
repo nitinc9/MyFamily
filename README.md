@@ -47,6 +47,12 @@ Keep adding more details to your family and build stronger connections!
 ## Demo URL
 https://youtu.be/Go4RbO5r5b8
 
+## Screenshots
+
+### Add Member
+
+![Add Member](/images/screenshots/Add_Member.png?raw=true "Add Member")
+
 # Understanding the Code
 
 The app uses the following files as the entry points.
