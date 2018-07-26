@@ -15,8 +15,11 @@ A Facebook web application to build stronger connections by knowing your family 
   - **Family Manager**: Can do all operations on a family, except editing and deleting the family itself. This is controlled by the **Can manage family** permission.
   - **Normal Member**: Can update their basic information and add facts about themselves.
 
-# Pre-requisites
-## Facebook User Permissions
+# Getting Started
+
+## Pre-requisites
+
+### Facebook User Permissions
 In order to use the app, please use the following permissions list.
 - Must have
   - friends
@@ -24,8 +27,6 @@ In order to use the app, please use the following permissions list.
   - gender
   - location
   - birthday 
-
-# Getting Started
 
 ## Application URL
 https://apps.facebook.com/cloudnine-my-family
