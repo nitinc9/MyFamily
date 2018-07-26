@@ -49,9 +49,29 @@ https://youtu.be/Go4RbO5r5b8
 
 ## Screenshots
 
+### Add Family
+
+![Add Family](/images/screenshots/Add_Family.png?raw=true "Add Family")
+
 ### Add Member
 
 ![Add Member](/images/screenshots/Add_Member.png?raw=true "Add Member")
+
+### Manage Members
+
+![Manage Members](/images/screenshots/Manage_Members.png?raw=true "Manage Members")
+
+### Add Facts About a Member
+
+![Member Responses](/images/screenshots/Member_Responses.png?raw=true "Member Responses")
+
+### View Family Tree
+
+![Family Tree](/images/screenshots/Family_Tree.png?raw=true "Family Tree")
+
+### View Member Information
+
+![Member Information](/images/screenshots/Member_Info.png?raw=true "Member Information")
 
 # Understanding the Code
 
