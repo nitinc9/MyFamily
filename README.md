@@ -1,6 +1,6 @@
 # Introduction
 
-A Facebook web application to build stronger connections by knowing your family better. In this digital age, social media plays a key role to bridge distances so that family members can not just know each others names, but know more about them. What do they like? What are their hobbies? May be the grandson and grandparent were both die-hard movie lovers. Discover interesting facts about your family and build stronger connections.
+A Facebook web application to build stronger connections by knowing your family better. In this digital age, social media plays a key role to bridge distances so that family members can not just know each others names, but know more about them. What was it like when they were growing up? What are their hobbies? May be the grandson and grandparent are both die-hard movie lovers. Discover interesting facts about your family and build stronger connections.
 
 # Features
 
@@ -20,12 +20,19 @@ A Facebook web application to build stronger connections by knowing your family 
 In order to use the app, please use the following permissions list.
 - Must have
   - friends
-- Nice (but, highly recommended)
+- Nice to have (but, highly recommended)
   - gender
   - location
   - birthday 
 
-# How to use?
+# Getting Started
+
+## Application URL
+https://apps.facebook.com/cloudnine-my-family
+or
+https://apps.facebook.com/233351993945655
+
+## How to use the App?
 Use the **My Family** app to know your family better and build stronger connections by following these simple steps.
 - **Invite</strong> family members to use the **My Family** app.
 - **Create a family**. Don't forget to give it a cool name! For example, *The Legendary Patils*.
@@ -37,6 +44,31 @@ Use the **My Family** app to know your family better and build stronger connecti
 
 Keep adding more details to your family and build stronger connections!
 
+## Demo URL
+https://youtu.be/Go4RbO5r5b8
+
+# Understanding the Code
+
+The app uses the following files as the entry points.
+- `index.php`: The launching page of the application that puts down the main layout.
+- `api.php`: Used for the AJAX calls.
+- `ui.php`: Used to render a section of the UI and give a more cohesive user-experience.
+
+The code uses the following classes for the main logic.
+- `MyFamily`: Acts as the controller.
+- `MyFamilyDelegate`: Provides the core business logic.
+- `MyFamilyUI`: Provides the UI related logic.
+
+# Configuration
+
+Application's configuration is managed via `config.json`.
+
+# Troubleshooting
+
+The application generates server-side logs and log level is configurable in the `config.json`.
+
+# Other Info
+Facebook Hackathon URL: https://devpost.com/software/myfamily
 
 # Credits
 
@@ -44,3 +76,5 @@ Keep adding more details to your family and build stronger connections!
   - For images in the logo
   - For profile images
   - For loading spinner gif
+- [Treant.js](http://fperucic.github.io/treant-js)
+  - For the awesome chart library

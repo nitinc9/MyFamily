@@ -3,6 +3,7 @@
 var UI_URL = '/apps/MyFamily/ui.php';
 var API_URL = "/apps/MyFamily/api.php";
 
+
 /**
  * Set up submenu display handlers.
  */
@@ -211,6 +212,19 @@ jQuery(document).ready(function($) {
     return false;
   });
   
+  /* Handle the back to family action. */
+  $(document).on('click', '#backToFamily', function() {
+    $.ajax({
+      url: UI_URL,
+      type: 'POST',
+      data: $('#familyForm').serialize(),
+      success: function(response) {
+        updateContent(response);
+      }
+    });
+    return false;
+  });
+  
   /* Handle the delete family member action. */
   $(document).on('click', '.deleteFamilyMember', function() {
     var result = confirm('Are you sure?');
@@ -300,7 +314,8 @@ jQuery(document).ready(function($) {
   /* Handles the family member form submission. */
   $(document).on('submit', '#familyMemberForm', function() {
     // Check which submit button was clicked
-    var submitID = $(this).find('input[type=submit]:focus').attr('id');
+    //var submitID = $(this).find('input[type=submit]:focus').attr('id');
+    var submitID = this.submitID;
     // Check if it's an eligible request for API call, otherwise process it as a UI call
     if (submitID != 'showAddFamilyMemberForm' && $('#source_member_id').length > 0) {
       var disabled = $('#family_id').attr('disabled');
@@ -336,7 +351,7 @@ jQuery(document).ready(function($) {
   /* Handles the family member selection form submission. */
   $(document).on('submit', '#familyMemberSelectionForm', function() {
     // Check which submit button was clicked
-    var submitID = $(this).find('input[type=submit]:focus').attr('id');
+    var submitID = this.submitID;
     // Check if it's an eligible request for API call, otherwise process it as a UI call
     if (submitID != 'manageFamilyMembers' && $('#member_id').length > 0) {
       $.ajax({
@@ -367,15 +382,16 @@ jQuery(document).ready(function($) {
   
   /* Handles the family tree form submission. */
   $(document).on('submit', '#familyTreeForm', function() {
-    //e.preventDefault();
-    $.ajax({
-      url: API_URL,
-      type: 'POST',
-      data: $('#familyTreeForm').serialize(),
-      success: function(response) {
-        showFamilyTree(response);
-      }
-    });
+    if ($('#family_id').length > 0) {
+      $.ajax({
+        url: API_URL,
+        type: 'POST',
+        data: $('#familyTreeForm').serialize(),
+        success: function(response) {
+          showFamilyTree(response);
+        }
+      });
+    }
     return false;
   });
 });

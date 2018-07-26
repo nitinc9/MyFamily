@@ -361,9 +361,14 @@ class MyFamilyDelegate {
         $query = "select count(*) as 'num_members' from family_members where family_id=?";
         $params = [$familyID];
         $rows = $this->executeDBQuery($query, $params, true);
-        if ($rows && $rows[0]['num_members'] > 0) {
-            throw new LogicException("The family contains members. Please delete these first.");
+        if ($rows && $rows[0]['num_members'] > 1) {
+            throw new LogicException("The family contains more than one member. Please delete these first.");
         }
+        // Delete the last member remaining
+        $query = 'delete from family_members where family_id=?';
+        $params = [$familyID];
+        $status = $this->executeDBQuery($query, $params, false);
+        // Delete the family
         $query = 'delete from family where id=?';
         $params = [$familyID];
         $status = $this->executeDBQuery($query, $params, false);
@@ -563,10 +568,11 @@ class MyFamilyDelegate {
     
     /**
      * Deletes the family member based on the supplied data.
-     * 
+     *
+     * @param user: The current user.
      * @param data: The member data.
      */
-    public function deleteFamilyMember($data) {
+    public function deleteFamilyMember($user, $data) {
         $requiredParams = [MyFamilyConstants::$FAMILY_ID_PARAM, MyFamilyConstants::$MEMBER_ID_PARAM];
         $missingParams = $this->checkRequiredParams($data, $requiredParams);
         if ($missingParams) {
@@ -574,15 +580,16 @@ class MyFamilyDelegate {
         }
         $familyID = $data[MyFamilyConstants::$FAMILY_ID_PARAM];
         $memberID = $data[MyFamilyConstants::$MEMBER_ID_PARAM];
+        $currentMemberID = $user[MyFamilyConstants::$ID_PARAM];
         // Ensure family member sub-tree is empty
-        $query = "select count(*) as 'num_members' from family_members where family_id=? and parent_id=?";
-        $params = [$familyID, $memberID];
+        $query = "select count(*) as 'num_members' from family_members where family_id=? and parent_id=? and member_id != ?";
+        $params = [$familyID, $memberID, $currentMemberID];
         $rows = $this->executeDBQuery($query, $params, true);
         if ($rows && $rows[0]['num_members'] > 0) {
-            throw new LogicException("The member has children members. Please delete these child members first.");
+            throw new LogicException("The member has other child members. Please delete these child members first.");
         }
-        $query = 'delete from family_members where family_id=? and member_id=?';
-        $params = [$familyID, $memberID];
+        $query = 'delete from family_members where family_id=? and member_id=? and member_id != ?';
+        $params = [$familyID, $memberID, $currentMemberID];
         $status = $this->executeDBQuery($query, $params, false);
         $isSuccess = ($status > 0);
         

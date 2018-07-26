@@ -168,6 +168,7 @@ Keep adding more details to your family and build stronger connections!
         $familiesBuf = $this->prepareFamilies($families, $familyID);
         ?>
 <h1><?php echo _('Manage Families'); ?></h1>
+<p>Only a family admin can manage the family.</p>
 <form id="manageFamiliesForm" method="post">
   <input type='hidden' name='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' value='<?php echo MyFamilyConstants::$SHOW_EDIT_FAMILY_FORM_CMD; ?>'/>
   <input type='hidden' name='<?php echo MyFamilyConstants::$ACCESS_TOKEN_PARAM; ?>' value='<?php echo $this->getAccessToken(); ?>'/>
@@ -223,18 +224,20 @@ Keep adding more details to your family and build stronger connections!
      * @param families: The families.
      * @parma familyID: The current family ID, if any.
      * @param members: The family members.
+     * @param currentMember: The current member.
      */
-    public function showFamilyMembers($families, $familyID, $members) {
+    public function showFamilyMembers($families, $familyID, $members, $currentMember) {
         $familiesBuf = $this->prepareFamilies($families, $familyID);
 ?>
 <h1>Manage Family Members</h1>
+<p>Only a family manager can manage the other family members.</p>
 <form id='familyMemberSelectionForm'>
   <input type='hidden' id='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' name='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' value='<?php echo MyFamilyConstants::$MANAGE_FAMILY_MEMBERS_CMD; ?>'/>
   <input type='hidden' name='<?php echo MyFamilyConstants::$ACCESS_TOKEN_PARAM; ?>' value='<?php echo $this->getAccessToken(); ?>'/>
   <table>
     <tr>
       <td><?php echo $familiesBuf; ?></td>
-      <td colspan='2'><center><input id='<?php echo MyFamilyConstants::$MANAGE_FAMILY_MEMBERS_CMD; ?>' type='submit' name='submit' value='<?php echo _('Show Members'); ?>'/></center></td>
+      <td colspan='2'><center><input id='<?php echo MyFamilyConstants::$MANAGE_FAMILY_MEMBERS_CMD; ?>' type='submit' name='submit' value='<?php echo _('Show Members'); ?>' onClick="this.form.submitID='<?php echo MyFamilyConstants::$MANAGE_FAMILY_MEMBERS_CMD; ?>';"/></center></td>
     </tr>
   </table>
 <?php
@@ -248,16 +251,30 @@ Keep adding more details to your family and build stronger connections!
             <th>Action</th>
           </tr>
 <?php
+            $currentMemberID = $currentMember[MyFamilyConstants::$MEMBER_ID_PARAM];
+            $canManageFamily = ($currentMember[MyFamilyConstants::$CAN_MANAGE_FAMILY_PARAM] == 'Y');
             foreach ($members as $member) {
                 $id = $member[MyFamilyConstants::$MEMBER_ID_PARAM];
                 $name = $member[MyFamilyConstants::$NAME_PARAM];
+                $canManageFamily = ($canManageFamily || ($currentMemberID == $id));
 ?>
           <tr>
             <td><?php echo $name; ?></td>
             <td>
+<?php
+                if ($canManageFamily) {
+?>
               <a class='<?php echo MyFamilyConstants::$EDIT_FAMILY_MEMBER_CMD; ?>' id='<?php echo $id; ?>' href="#"><?php echo _('Edit Relation'); ?></a>
-              | <a class='<?php echo MyFamilyConstants::$DELETE_FAMILY_MEMBER_CMD; ?>' id='<?php echo $id; ?>' href="#"><?php echo _('Delete'); ?></a>
-              | <a class='<?php echo MyFamilyConstants::$EDIT_MEMBER_RESPONSES_CMD; ?>' id='<?php echo $id; ?>' href="#"><?php echo _('Details'); ?></a>
+              &nbsp;|&nbsp; <a class='<?php echo MyFamilyConstants::$EDIT_MEMBER_RESPONSES_CMD; ?>' id='<?php echo $id; ?>' href="#"><?php echo _('Details'); ?></a>
+              &nbsp;|&nbsp; <a class='<?php echo MyFamilyConstants::$DELETE_FAMILY_MEMBER_CMD; ?>' id='<?php echo $id; ?>' href="#"><?php echo _('Delete'); ?></a>
+<?php
+                }
+                else {
+?>
+              &nbsp;
+<?php
+                }
+?>
             </td>
           </tr>
 <?php
@@ -279,17 +296,33 @@ Keep adding more details to your family and build stronger connections!
      * @param familyID: The current family ID, if any.
      * @param members: The family members.
      * @param member: The seleted family member, if any.
+     * @param currentMember: The current member.
      * @param relations: The list of relations.
      * @param friends: The current user friends.
      * @param managedUsers: The non-facebook users managed by the current user.
      */
-    public function showEditFamilyMemberForm($cmd, $families, $familyID, $members, $member, $relations, $friends, $managedUsers) {
+    public function showEditFamilyMemberForm($cmd, $families, $familyID, $members, $member, $currentMember, $relations, $friends, $managedUsers) {
         $cmd = ($cmd == MyFamilyConstants::$SHOW_ADD_FAMILY_MEMBER_FORM_CMD) ? MyFamilyConstants::$ADD_FAMILY_MEMBER_CMD : MyFamilyConstants::$EDIT_FAMILY_MEMBER_CMD;
         $isUpdate = ($cmd == MyFamilyConstants::$EDIT_FAMILY_MEMBER_CMD) ? true : false;
         $cmd = ($familyID) ? $cmd : MyFamilyConstants::$SHOW_ADD_FAMILY_MEMBER_FORM_CMD;
         $familiesBuf = $this->prepareFamilies($families, $familyID, $isUpdate);
 ?>
-<h1><?php echo _('Manage Family Members'); ?></h1>
+<h1><?php echo _('Edit Family Member'); ?></h1>
+<?php
+        if ($isUpdate) {
+?>
+<div class='actionBar'>
+  <a id='backToFamily' href='#'><?php echo _('Back to Family'); ?></a>
+  <form id="familyForm" method="post">
+    <input type='hidden' name='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' value='<?php echo MyFamilyConstants::$MANAGE_FAMILY_MEMBERS_CMD; ?>'/>
+    <input type='hidden' name='<?php echo MyFamilyConstants::$ACCESS_TOKEN_PARAM; ?>' value='<?php echo $this->getAccessToken(); ?>'/>
+    <input type='hidden' name='<?php echo MyFamilyConstants::$FAMILY_ID_PARAM; ?>' value='<?php echo $familyID; ?>'/>
+  </form>
+</div>
+<p/>
+<?php
+        }
+?>
 <form id="familyMemberForm" method="post">
   <input type='hidden' name='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' value='<?php echo $cmd; ?>'/>
   <input type='hidden' name='<?php echo MyFamilyConstants::$ACCESS_TOKEN_PARAM; ?>' value='<?php echo $this->getAccessToken(); ?>'/>
@@ -302,7 +335,7 @@ Keep adding more details to your family and build stronger connections!
 <?php
         if (!$isUpdate) {
 ?>
-            <td colspan='2'><center><input id='<?php echo MyFamilyConstants::$SHOW_ADD_FAMILY_MEMBER_FORM_CMD; ?>' type='submit' name='submit' value='<?php echo _('Manage'); ?>'/></center></td>
+            <td colspan='2'><center><input id='<?php echo MyFamilyConstants::$SHOW_ADD_FAMILY_MEMBER_FORM_CMD; ?>' type='submit' name='submit' value='<?php echo _('Manage'); ?>' onClick="this.form.submitID='<?php echo MyFamilyConstants::$SHOW_ADD_FAMILY_MEMBER_FORM_CMD; ?>';"/></center></td>
 <?php
         }
         else {
@@ -339,8 +372,12 @@ Keep adding more details to your family and build stronger connections!
                 }
                 $membersBuf .= "</select>\n";
             }
+            $canManageFamily = ($currentMember && $currentMember[MyFamilyConstants::$CAN_MANAGE_FAMILY_PARAM] == 'Y');
+            $isFamilyAdmin = ($currentMember && $currentMember[MyFamilyConstants::$IS_FAMILY_ADMIN_PARAM] == 'Y');
             $canManageFamilySelectedStr = ($member && $member[MyFamilyConstants::$CAN_MANAGE_FAMILY_PARAM] == 'Y') ? 'checked' : '';
             $isFamilyAdminSelectedStr = ($member && $member[MyFamilyConstants::$IS_FAMILY_ADMIN_PARAM] == 'Y') ? 'checked' : '';
+            $disableCanManageFamilyPermissionStr = (!$canManageFamily) ? 'disabled' : '';
+            $disableIsFamilyAdminPermissionStr = (!$isFamilyAdmin) ? 'disabled' : '';
             $saveButtonTitle = ($isUpdate) ? _('Save Member') : _('Add Member');
 ?>
     <tr>
@@ -356,8 +393,8 @@ Keep adding more details to your family and build stronger connections!
           </tr>
           <tr>
             <td colspan='6'>
-              <center><input type='checkbox' name='<?php echo MyFamilyConstants::$CAN_MANAGE_FAMILY_PARAM; ?>' value='Y' <?php echo $canManageFamilySelectedStr; ?>/> <?php echo _('Can manage family?'); ?>
-              <input type='checkbox' name='<?php echo MyFamilyConstants::$IS_FAMILY_ADMIN_PARAM; ?>' value='Y' <?php echo $isFamilyAdminSelectedStr; ?>/> <?php echo _('Is family admin?'); ?></center>
+              <center><input type='checkbox' name='<?php echo MyFamilyConstants::$CAN_MANAGE_FAMILY_PARAM; ?>' value='Y' <?php echo $canManageFamilySelectedStr; ?> <?php echo $disableCanManageFamilyPermissionStr; ?>/> <?php echo _('Can manage family?'); ?>
+              <input type='checkbox' name='<?php echo MyFamilyConstants::$IS_FAMILY_ADMIN_PARAM; ?>' value='Y' <?php echo $isFamilyAdminSelectedStr; ?> <?php echo $disableIsFamilyAdminPermissionStr; ?>/> <?php echo _('Is family admin?'); ?></center>
             </td>
           </tr>
         </table>
@@ -391,6 +428,15 @@ Keep adding more details to your family and build stronger connections!
     public function showMemberResponsesForm($memberID, $familyID, $questions, $responses) {
 ?>
 <h1><?php echo _('Know Your Family Better!'); ?></h1>
+<div class='actionBar'>
+  <a id='backToFamily' href='#'><?php echo _('Back to Family'); ?></a>
+  <form id="familyForm" method="post">
+    <input type='hidden' name='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' value='<?php echo MyFamilyConstants::$MANAGE_FAMILY_MEMBERS_CMD; ?>'/>
+    <input type='hidden' name='<?php echo MyFamilyConstants::$ACCESS_TOKEN_PARAM; ?>' value='<?php echo $this->getAccessToken(); ?>'/>
+    <input type='hidden' name='<?php echo MyFamilyConstants::$FAMILY_ID_PARAM; ?>' value='<?php echo $familyID; ?>'/>
+  </form>
+</div>
+<p/>
 <form id="getQuestionsForm" method="post">
   <input type='hidden' name='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' value='<?php echo MyFamilyConstants::$GET_QUESTIONS_CONTROL_CMD; ?>'/>
   <input type='hidden' name='<?php echo MyFamilyConstants::$ACCESS_TOKEN_PARAM; ?>' value='<?php echo $this->getAccessToken(); ?>'/>
@@ -451,7 +497,7 @@ Keep adding more details to your family and build stronger connections!
             $selectedStr = ($familyID && $id == $familyID) ? 'selected' : '';
             $familiesBuf .= "<option value='" . $id . "' " . $selectedStr . ">" . $name . "</option>\n";
         }
-        ?>
+?>
 <h1><?php echo _('Family Tree'); ?></h1>
 <form id="familyTreeForm" method="post">
   <input type='hidden' name='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' value='<?php echo MyFamilyConstants::$GET_FAMILY_TREE_CMD; ?>'/>
@@ -471,11 +517,12 @@ Keep adding more details to your family and build stronger connections!
     /**
      * Shows the member details.
      * 
+     * @param familyID: The family ID.
      * @param member: The member.
      * @param questions: The questions.
      * @param responses: The member responses.
      */
-    public function showMemberDetails($member, $questions, $responses) {
+    public function showMemberDetails($familyID, $member, $questions, $responses) {
         $name = $member[MyFamilyConstants::$NAME_PARAM] ? htmlspecialchars($member[MyFamilyConstants::$NAME_PARAM]) : '';
         if ($member[MyFamilyConstants::$DOB_PARAM]) {
             $dob = $member[MyFamilyConstants::$DOB_PARAM];
@@ -488,6 +535,15 @@ Keep adding more details to your family and build stronger connections!
         $location = $member[MyFamilyConstants::$LOCATION_PARAM] ? htmlspecialchars($member[MyFamilyConstants::$LOCATION_PARAM]) : '-';
 ?>        
 <h1><?php echo _('Member Information'); ?></h1>
+<div class='actionBar'>
+  <a id='backToFamily' href='#'><?php echo _('Back to Family Tree'); ?></a>
+  <form id="familyForm" method="post">
+    <input type='hidden' name='<?php echo MyFamilyConstants::$CMD_PARAM; ?>' value='<?php echo MyFamilyConstants::$SHOW_FAMILY_TREE_FORM_CMD; ?>'/>
+    <input type='hidden' name='<?php echo MyFamilyConstants::$ACCESS_TOKEN_PARAM; ?>' value='<?php echo $this->getAccessToken(); ?>'/>
+    <input type='hidden' name='<?php echo MyFamilyConstants::$FAMILY_ID_PARAM; ?>' value='<?php echo $familyID; ?>'/>
+  </form>
+</div>
+<p/>
 <form>
   <table>
     <tr>
@@ -609,7 +665,7 @@ Add some details about them and know your family better.
         $buf = "<select id='$controlID' name='$controlID'>\n";
         $buf .= "<option value=''>" . _('-- Select a member --') . "</option>\n";
         foreach ($members as $currMember) {
-            $id = $currMember[MyFamilyConstants::$ID_PARAM];
+            $id = $currMember[MyFamilyConstants::$MEMBER_ID_PARAM];
             $name = htmlspecialchars($currMember[MyFamilyConstants::$NAME_PARAM]);
             $selectedStr = ($memberID && $id == $memberID) ? 'selected' : '';
             $buf .= "<option value='" . $id . "' " . $selectedStr . ">" . $name . "</option>\n";

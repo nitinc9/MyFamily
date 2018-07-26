@@ -54,14 +54,13 @@ class MyFamily {
         $user = null;
         try {
             $data = isset($_POST) ? $_POST : [];
-            $cmd = isset($_POST[MyFamilyConstants::$CMD_PARAM]) ? $_POST[MyFamilyConstants::$CMD_PARAM] : MyFamilyConstants::$SHOW_HOME_CMD;
+            $cmd = isset($data[MyFamilyConstants::$CMD_PARAM]) ? $data[MyFamilyConstants::$CMD_PARAM] : MyFamilyConstants::$SHOW_HOME_CMD;
             $this->logger->debug("MyFamily::process(): cmd: $cmd");
-            
-            $this->delegate->init();
-            
             if ($this->logger->isDebugEnabled()) {
                 $this->logger->debug(sprintf("MyFamily::process(): data: %s", json_encode($data)));
             }
+            
+            $this->delegate->init();
             
             // Reuse access token (if any)
             $accessToken = $this->delegate->getAccessToken();
@@ -93,20 +92,30 @@ class MyFamily {
                 else if ($cmd == MyFamilyConstants::$MANAGE_FAMILY_MEMBERS_CMD) {
                     $familyID = $data[MyFamilyConstants::$FAMILY_ID_PARAM];
                     $familyID = ($familyID) ? $familyID : $this->delegate->getUserDefaultFamilyID($user);
-                    $families = $this->delegate->getUserManagedFamilies($user);
+                    $families = $this->delegate->getUserFamilies($user);
                     $members = [];
-                    if ($this->delegate->isFamilyInList($families, $familyID)) {
+                    $currentMember = null;
+                    if ($familyID) {
                         $members = $this->delegate->getFamilyMembers($familyID);
+                        $currentMember = $this->delegate->getFamilyMember($familyID, $user[MyFamilyConstants::$ID_PARAM]);
                     }
-                    $this->ui->showFamilyMembers($families, $familyID, $members);
+                    $this->ui->showFamilyMembers($families, $familyID, $members, $currentMember);
                 }
                 else if ($cmd == MyFamilyConstants::$SHOW_ADD_FAMILY_MEMBER_FORM_CMD || $cmd == MyFamilyConstants::$SHOW_EDIT_FAMILY_MEMBER_FORM_CMD) {
                     $familyID = $data[MyFamilyConstants::$FAMILY_ID_PARAM];
                     $familyID = ($familyID) ? $familyID : $this->delegate->getUserDefaultFamilyID($user);
                     $memberID = $data[MyFamilyConstants::$MEMBER_ID_PARAM];
+                    $families = null;
                     $members = [];
                     $member = null;
-                    $families = $this->delegate->getUserManagedFamilies($user);
+                    $currentMember = $this->delegate->getFamilyMember($familyID, $user[MyFamilyConstants::$ID_PARAM]);
+                    // Only a family manager should be allowed to add members, but a member can edit her details
+                    if ($cmd == MyFamilyConstants::$SHOW_ADD_FAMILY_MEMBER_FORM_CMD) {
+                        $families = $this->delegate->getUserManagedFamilies($user);
+                    }
+                    else {
+                        $families = $this->delegate->getUserFamilies($user);
+                    }
                     if ($this->delegate->isFamilyInList($families, $familyID)) {
                         $members = $this->delegate->getFamilyMembers($familyID);
                         if ($memberID) {
@@ -121,7 +130,7 @@ class MyFamily {
                         $friends = $connections[MyFamilyConstants::$FRIENDS];
                         $managedUsers = $relations[MyFamilyConstants::$MANAGED_USERS];
                     }
-                    $this->ui->showEditFamilyMemberForm($cmd, $families, $familyID, $members, $member, $relations, $friends, $managedUsers);
+                    $this->ui->showEditFamilyMemberForm($cmd, $families, $familyID, $members, $member, $currentMember, $relations, $friends, $managedUsers);
                 }
                 else if ($cmd == MyFamilyConstants::$GET_QUESTIONS_CONTROL_CMD) {
                     $questions = $this->delegate->getQuestions();
@@ -135,8 +144,9 @@ class MyFamily {
                     $this->ui->showMemberResponsesForm($memberID, $familyID, $questions, $responses);
                 }
                 else if ($cmd == MyFamilyConstants::$SHOW_FAMILY_TREE_FORM_CMD) {
+                    $familyID = $data[MyFamilyConstants::$FAMILY_ID_PARAM];
+                    $familyID = ($familyID) ? $familyID : $this->delegate->getUserDefaultFamilyID($user);
                     $families = $this->delegate->getUserFamilies($user);
-                    $familyID = $this->delegate->getUserDefaultFamilyID($user);
                     $this->ui->showFamilyTreeForm($families, $familyID);
                 }
                 else if ($cmd == MyFamilyConstants::$SHOW_MEMBER_DETAILS_CMD) {
@@ -145,7 +155,7 @@ class MyFamily {
                     $member = $this->delegate->getUser($memberID);
                     $questions = $this->delegate->getQuestions();
                     $responses = $this->delegate->getMemberResponses($memberID, $familyID);
-                    $this->ui->showMemberDetails($member, $questions, $responses);
+                    $this->ui->showMemberDetails($familyID, $member, $questions, $responses);
                 }
                 else if ($cmd == MyFamilyConstants::$SHOW_SETTINGS_FORM_CMD) {
                     $settings = $this->delegate->getUserSettings($user);
@@ -205,7 +215,7 @@ class MyFamily {
                     }
                 }
                 else if ($cmd == MyFamilyConstants::$DELETE_FAMILY_MEMBER_CMD) {
-                    $status = $this->delegate->deleteFamilyMember($data);
+                    $status = $this->delegate->deleteFamilyMember($user, $data);
                     if ($status) {
                         $data = [MyFamilyConstants::$MESSAGE => _('The family member has been deleted successfully.')];
                         $response[MyFamilyConstants::$CODE] = MyFamilyConstants::$SUCCESS_CODE;
@@ -264,6 +274,12 @@ class MyFamily {
         }
         catch(Exception $e) {
             $msg = (get_class($e) == 'LogicException') ? $e->getMessage() : _('An error has occurred.');
+            if (get_class($e) == 'Facebook\Exceptions\FacebookResponseException') {
+                $txt = $e->getMessage();
+                if (stripos($txt, 'expired') != false) {
+                    $msg = "The session has expired. Please refresh the browser page.";
+                }
+            }
             $data = [MyFamilyConstants::$ERROR => $msg];
             $response[MyFamilyConstants::$CODE] = (isset($user)) ? MyFamilyConstants::$FAILURE_CODE : MyFamilyConstants::$ACCESS_DENIED_CODE;
             $response[MyFamilyConstants::$DATA] = $data;
