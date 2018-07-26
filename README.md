@@ -11,7 +11,7 @@ A Facebook web application to build stronger connections by knowing your family 
   - Family Member facts can only be seen by that specific family members. That is, if a member is part of two families, member from family one will not be able to see the facts shared with the other family. 
 - View your **Family Tree**.
 - Role-based Access Control
-  - **Family Admin**: Can do all operations on a family. This is controlled by the **Is family admin** permission.
+  - **Family Admin**: Can do all operations on a family. This is controlled by the **Is family admin** permission. A creator is automatically a Family Admin.
   - **Family Manager**: Can do all operations on a family, except editing and deleting the family itself. This is controlled by the **Can manage family** permission.
   - **Normal Member**: Can update their basic information and add facts about themselves.
 
